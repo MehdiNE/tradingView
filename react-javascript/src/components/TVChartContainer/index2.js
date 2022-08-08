@@ -3,17 +3,10 @@ import "./index.css";
 import { widget } from "../../charting_library/charting_library";
 import Datafeed from "../../datafeed";
 
-function getLanguageFromURL() {
-  const regex = new RegExp("[\\?&]lang=([^&#]*)");
-  const results = regex.exec(window.location.search);
-  return results === null
-    ? null
-    : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-export class TVChartContainer extends React.PureComponent {
-  static defaultProps = {
-    symbol: "پالایش1           ",
+function TVChartContainer() {
+  const ref = React.useRef();
+  const defaultProps = {
+    symbol: "AAPL",
     interval: "D",
     datafeedUrl: "https://demo_feed.tradingview.com",
     libraryPath: "/charting_library/",
@@ -26,15 +19,7 @@ export class TVChartContainer extends React.PureComponent {
     studiesOverrides: {},
   };
 
-  tvWidget = null;
-
-  constructor(props) {
-    super(props);
-
-    this.ref = React.createRef();
-  }
-
-  componentDidMount() {
+  React.useEffect(() => {
     const dateOption = {
       weekday: "long",
       year: "numeric",
@@ -42,12 +27,12 @@ export class TVChartContainer extends React.PureComponent {
       day: "numeric",
     };
     const widgetOptions = {
-      symbol: this.props.symbol,
+      symbol: defaultProps.symbol,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: Datafeed,
-      interval: this.props.interval,
-      container: this.ref.current,
-      library_path: this.props.libraryPath,
+      interval: defaultProps.interval,
+      container: defaultProps.current,
+      library_path: defaultProps.libraryPath,
       locale: "fa",
       timezone: "Asia/Tehran",
       disabled_features: [
@@ -78,13 +63,13 @@ export class TVChartContainer extends React.PureComponent {
         },
       },
       enabled_features: ["study_templates"],
-      charts_storage_url: this.props.chartsStorageUrl,
-      charts_storage_api_version: this.props.chartsStorageApiVersion,
-      client_id: this.props.clientId,
-      user_id: this.props.userId,
-      fullscreen: this.props.fullscreen,
-      autosize: this.props.autosize,
-      studies_overrides: this.props.studiesOverrides,
+      charts_storage_url: defaultProps.chartsStorageUrl,
+      charts_storage_api_version: defaultProps.chartsStorageApiVersion,
+      client_id: defaultProps.clientId,
+      user_id: defaultProps.userId,
+      fullscreen: defaultProps.fullscreen,
+      autosize: defaultProps.autosize,
+      studies_overrides: defaultProps.studiesOverrides,
     };
 
     const tvWidget = new widget(widgetOptions);
@@ -108,16 +93,16 @@ export class TVChartContainer extends React.PureComponent {
         button.innerHTML = "Check API";
       });
     });
-  }
 
-  componentWillUnmount() {
-    if (this.tvWidget !== null) {
-      this.tvWidget.remove();
-      this.tvWidget = null;
-    }
-  }
+    return () => {
+      if (this.tvWidget !== null) {
+        this.tvWidget.remove();
+        this.tvWidget = null;
+      }
+    };
+  }, [defaultProps]);
 
-  render() {
-    return <div ref={this.ref} className={"TVChartContainer"} />;
-  }
+  return <div ref={ref}>TVChartContainer</div>;
 }
+
+export default TVChartContainer;
