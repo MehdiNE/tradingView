@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { makeApiRequest, generateSymbol, parseFullSymbol } from "./helpers.js";
 const lastBarsCache = new Map();
 const channelToSubscription = new Map();

@@ -7,6 +7,7 @@ import {
   IChartingLibraryWidget,
   ResolutionString,
 } from "../../charting_library/charting_library";
+import datafeed from "../../datafeed";
 
 export interface ChartContainerProps {
   symbol: ChartingLibraryWidgetOptions["symbol"];
@@ -29,6 +30,7 @@ export interface ChartContainerState {}
 
 function getLanguageFromURL(): LanguageCode | null {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
+  // eslint-disable-next-line no-restricted-globals
   const results = regex.exec(location.search);
   return results === null
     ? null
@@ -65,9 +67,7 @@ export class TVChartContainer extends React.PureComponent<
       symbol: this.props.symbol as string,
       // BEWARE: no trailing slash is expected in feed URL
       // tslint:disable-next-line:no-any
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
-        this.props.datafeedUrl
-      ),
+      datafeed: datafeed,
       interval: this.props.interval as ChartingLibraryWidgetOptions["interval"],
       container: this.ref.current,
       library_path: this.props.libraryPath as string,
